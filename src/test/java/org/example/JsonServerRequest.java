@@ -7,8 +7,9 @@ import APITesting.com.org.classes.advanced._Info;
 import APITesting.com.org.classes.advanced.__Posts;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.hamcrest.Matchers.*;
+
 import static com.jayway.restassured.RestAssured.*;
 
 public class JsonServerRequest {
@@ -155,5 +156,27 @@ public class JsonServerRequest {
 
         System.out.println("Response : " + resp.asString());
 
+    }
+
+    //Get response  calculate response time
+    @Test
+    public void Test_10(){
+
+        Response resp = given().
+                    when().
+                get("http://localhost:3000/posts");
+
+        Long time = resp.then().
+                extract().
+                time();
+
+        System.out.println("Response time : " + time + " ms");
+
+        given().
+                when().
+                get("http://localhost:3000/posts").
+                then().
+                and().
+                time(lessThan(800L));
     }
 }
