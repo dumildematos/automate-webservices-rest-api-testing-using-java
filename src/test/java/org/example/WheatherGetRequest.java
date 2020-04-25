@@ -1,5 +1,6 @@
 package org.example;
 
+import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -66,9 +67,19 @@ public class WheatherGetRequest {
         System.out.println(resp.asString());
 
     }
-
-    @Test
+    //@Test
     public void Test_06() {
+        Response resp = given().
+                param("id","2172797").
+                param("appid","439d4b804bc8187953eb36d2a8c26a02").
+                when().
+                get("https://samples.openweathermap.org/data/2.5/weather");
+
+        Assert.assertEquals(resp.getStatusCode(), 200);
+        System.out.println(resp.asString());
+    }
+    //@Test
+    public void Test_07() {
         Response resp = given().
                 param("zip","201010,in").
                 param("appid","439d4b804bc8187953eb36d2a8c26a02").
@@ -77,5 +88,85 @@ public class WheatherGetRequest {
 
         Assert.assertEquals(resp.getStatusCode(), 200);
         System.out.println(resp.asString());
+    }
+
+    //@Test
+    public void Test_08() {
+        String weatherReport = given().
+                param("id","2172797").
+                param("appid","439d4b804bc8187953eb36d2a8c26a02").
+                when().
+                get("https://samples.openweathermap.org/data/2.5/weather").
+                then().
+                contentType(ContentType.JSON).
+                extract().
+                path("weather[0].description");
+
+        System.out.println("The weather report for today is: " + weatherReport );
+    }
+
+    //@Test
+    public void Test_09() {
+        Response resp = given().
+                param("id","2172797").
+                param("appid","439d4b804bc8187953eb36d2a8c26a02").
+                when().
+                get("https://samples.openweathermap.org/data/2.5/weather");
+
+        String actualWeatherReport = resp.then().
+                contentType(ContentType.JSON).
+                extract().
+                path("weather[0].description");
+
+        String expectedWeatherReport = null;
+
+        if(actualWeatherReport.equalsIgnoreCase(expectedWeatherReport)){
+            System.out.println("Testcase pass");
+        }else{
+            System.out.println("Testcase fail");
+        }
+
+    }
+
+    @Test
+    public void Test_10() {
+        Response resp = given().
+                parameter("id","2172797").
+                parameter("appid","439d4b804bc8187953eb36d2a8c26a02").
+                when().
+                get("https://samples.openweathermap.org/data/2.5/weather");
+
+        String reportById = resp.then().
+                    contentType(ContentType.JSON).
+                    extract().
+                    path("weather[0].description");
+
+        System.out.println("Weather description by ID :" + reportById);
+
+        String lon = String.valueOf(resp.then().
+                contentType(ContentType.JSON).
+                extract().
+                path("coord.lon"));
+        System.out.println("Longitude: " + lon);
+
+        String lat = String.valueOf(resp.then().
+                contentType(ContentType.JSON).
+                extract().
+                path("coord.lat"));
+        System.out.println("Latitude: " + lat);
+
+        Response respBysCoordenate = given().
+                parameter("lat",lat).
+                parameter("lon",lon).
+                parameter("appid","439d4b804bc8187953eb36d2a8c26a02").
+                when().
+                get("https://samples.openweathermap.org/data/2.5/weather");
+
+        String reportByICoordenate= respBysCoordenate.then().
+                contentType(ContentType.JSON).
+                extract().
+                path("weather[0].description");
+
+        System.out.println("Report by cordenate : " +reportByICoordenate);
     }
 }
