@@ -1,6 +1,10 @@
 package org.example;
 
+import APITesting.com.org.classes.Info;
 import APITesting.com.org.classes.Posts;
+import APITesting.com.org.classes._Posts;
+import APITesting.com.org.classes.advanced._Info;
+import APITesting.com.org.classes.advanced.__Posts;
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.Response;
 import org.testng.Assert;
@@ -87,7 +91,7 @@ public class JsonServerRequest {
     }
 
     // DELETE
-    @Test
+   // @Test
     public void Test_07(){
         Response resp = given().
                 when().
@@ -96,5 +100,60 @@ public class JsonServerRequest {
         System.out.println(resp.asString());
     }
 
+    // POST
+   // @Test
+    public void Test_08(){
 
+        Info info = new Info();
+        _Posts post = new _Posts();
+
+        info.setEmail("email@mailinator.com");
+        info.setPhone("98543676");
+        info.setAddress("Luanda");
+
+        post.setId(2);
+        post.setTitle("The gift");
+        post.setAuthor("Alan Smith");
+        post.setInfo(info);
+
+        Response resp = given().
+                when().
+                contentType(ContentType.JSON).
+                body(post).
+                post("http://localhost:3000/posts");
+
+        System.out.println("Response :" + resp.asString());
+
+
+    }
+
+    // Advanced
+    //@Test
+    public void Test_09() {
+        _Info info1 = new _Info();
+        _Info info2 = new _Info();
+        __Posts posts = new __Posts();
+
+        info1.setEmail("selena@mailinator.com");
+        info1.setPhone("871783123");
+        info1.setAddress("Viana");
+
+        info2.setEmail("maria@mailinator.com");
+        info2.setPhone("423423432");
+        info2.setAddress("Recife");
+
+        posts.setId(2);
+        posts.setTitle("Darkest Night");
+        posts.setAuthor("Helton Silva");
+        posts.setInfo(new _Info[]{info1,info2});
+
+        Response resp = given().
+                when().
+                contentType(ContentType.JSON).
+                body(posts).
+                post("http://localhost:3000/posts");
+
+        System.out.println("Response : " + resp.asString());
+
+    }
 }
